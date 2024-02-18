@@ -13,7 +13,7 @@ struct CubeTransitionView: View {
     //timer
     @State var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     @State var timerProgress : CGFloat = 0
-    @GestureState var press = false
+    //    @GestureState var isPressed : Bool
     var body: some View {
         GeometryReader { geo in
             ZStack{
@@ -22,7 +22,7 @@ struct CubeTransitionView: View {
                 Image(storyBundle.stories[index].imageURL)
                     .resizable()
                     .frame(maxWidth: .infinity , maxHeight: .infinity , alignment: .center)
-   
+                
             }
             //  .frame(maxWidth: .infinity , maxHeight: .infinity , alignment:.center)
             .background(.black)
@@ -30,40 +30,48 @@ struct CubeTransitionView: View {
             // tapping forward and backward
             .overlay(content: {
                 HStack{
+                    //                     tap gesture
+                    let HoldGesture = DragGesture(minimumDistance: 0.0)
+                        .onChanged({ _ in
+                            timer.upstream.connect().cancel()
+                        })
+                        .onEnded({ _ in
+                            timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+                        })
+                    
                     //backward
                     Rectangle()
                         .fill(.black.opacity(0.01))
-                        .onTapGesture {
-                            if (timerProgress - 1) < 0 {
-                                updateStory(isForward: false)
-                            }else{
-                                timerProgress = CGFloat(Int(timerProgress - 1))
-                            }
-                        }
+                        .gesture(
+                            TapGesture()
+                                .onEnded({ _ in
+                                    if (timerProgress - 1) < 0 {
+                                        updateStory(isForward: false)
+                                    }else{
+                                        timerProgress = CGFloat(Int(timerProgress - 1))
+                                    }
+                                    
+                                })
+                                .simultaneously(with: HoldGesture)
+                        )
+                    
                     //forward
                     Rectangle()
                         .fill(.black.opacity(0.01))
-                        .onTapGesture {
-                            if (timerProgress + 1) > CGFloat(storyBundle.stories.count){
-                                updateStory()
-                            }else{
-                                timerProgress = CGFloat(Int(timerProgress + 1))
-                            }
-                        }
+                        .gesture(
+                            TapGesture()
+                                .onEnded({ _ in
+                                    if (timerProgress + 1) > CGFloat(storyBundle.stories.count){
+                                        updateStory()
+                                    }else{
+                                        timerProgress = CGFloat(Int(timerProgress + 1))
+                                    }
+                                    
+                                })
+                                .simultaneously(with: HoldGesture)
+                        )
+                    
                 }
-              
-//                .gesture(
-//                    LongPressGesture(minimumDuration: 0.2)
-//                        .updating(press, body: <#T##(Self.Value, State, Transaction) -> Void#>)
-//                )
-//                .onLongPressGesture(minimumDuration: 0.1, maximumDistance: 1, perform: {
-//                    timer.upstream.connect().cancel()
-//                })
-//                { isTrue in
-//                    if isTrue{
-//                        timer=Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-//                    }
-//                }
                 
                 
             })
@@ -183,7 +191,9 @@ struct CubeTransitionView: View {
         let progress = geo.frame(in: .global).minX / geo.size.width
         return Angle(degrees: Double(45*progress))
     }
+    
     //#Preview {
     //    CubeTransitionView(story: <#Binding<StoryModel>#>)
     //}
 }
+
