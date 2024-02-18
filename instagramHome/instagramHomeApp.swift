@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct instagramHomeApp: App {
+    @StateObject  var vm = StoryViewModel()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-        }
+            NavigationStack{
+                HomePageView()
+            .environmentObject(vm)
+            }
+            }
     }
 }
