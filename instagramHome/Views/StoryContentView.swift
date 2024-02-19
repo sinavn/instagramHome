@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-struct CubeTransitionView: View {
+struct StoryContentView: View {
     @Binding var storyBundle : StoryModel
     @EnvironmentObject var vm : StoryViewModel
+    @State var timerProgress : CGFloat = 0
+    @State var isSwapped : Bool = false
+    @State var layerOpacIsClear = 1.0
     //timer
     @State var timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-    @State var timerProgress : CGFloat = 0
-    //    @GestureState var isPressed : Bool
     var body: some View {
         GeometryReader { geo in
             ZStack{
@@ -22,40 +23,37 @@ struct CubeTransitionView: View {
                 Image(storyBundle.stories[index].imageURL)
                     .resizable()
                     .frame(maxWidth: .infinity , maxHeight: .infinity , alignment: .center)
-                
             }
-            //  .frame(maxWidth: .infinity , maxHeight: .infinity , alignment:.center)
+            // stop timer if swapping
+            .onChange(of: geo.frame(in: .global).minX, { oldValue, newValue in
+                if newValue != 0.0 {
+                    timer.upstream.connect().cancel()
+                }else{
+                    timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+                }
+            })
             .background(.black)
             
-            // tapping forward and backward
+            // front layer
             .overlay(content: {
                 HStack{
-                    //                     tap gesture
-                    let HoldGesture = DragGesture(minimumDistance: 0.0)
-                        .onChanged({ _ in
-                            timer.upstream.connect().cancel()
-                        })
-                        .onEnded({ _ in
-                            timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-                        })
-                    
-                    //backward
+
+            //backward
                     Rectangle()
                         .fill(.black.opacity(0.01))
                         .gesture(
                             TapGesture()
+                            
                                 .onEnded({ _ in
                                     if (timerProgress - 1) < 0 {
                                         updateStory(isForward: false)
                                     }else{
                                         timerProgress = CGFloat(Int(timerProgress - 1))
                                     }
-                                    
                                 })
-                                .simultaneously(with: HoldGesture)
                         )
                     
-                    //forward
+            //forward
                     Rectangle()
                         .fill(.black.opacity(0.01))
                         .gesture(
@@ -66,76 +64,98 @@ struct CubeTransitionView: View {
                                     }else{
                                         timerProgress = CGFloat(Int(timerProgress + 1))
                                     }
-                                    
                                 })
-                                .simultaneously(with: HoldGesture)
                         )
-                    
                 }
-                
-                
-            })
-            // profile and x button
-            .overlay(alignment:.topTrailing ){
-                HStack(spacing:15){
-                    Image(storyBundle.accountImage)
-                        .resizable()
-                        .frame(width: 35 , height: 35)
-                        .clipShape(Circle())
-                    Text(storyBundle.accountName)
-                        .foregroundStyle(.white)
-                    Spacer()
-                    // close button X
-                    Button(action: {
-                        withAnimation {
-                            vm.showStory = false
-                            
+    // hold story func
+                ._onButtonGesture { isPressed in
+                    var tapTimer : Timer?
+                    if isPressed{
+                           tapTimer = Timer.scheduledTimer(withTimeInterval: 0.7, repeats: false) { _ in
+                                withAnimation() {
+                                layerOpacIsClear = 0
+                                 print("layer 0 ")
+                            }
                         }
-                    }, label: {
-                        Image(systemName: "xmark")
-                            .foregroundStyle(.white)
-                    })
-                }
-                .bold()
-                .font(.title2)
-                .padding()
-            }
-            //stories indicator capsule
-            .overlay(alignment: .top, content: {
-                HStack(spacing:5){
-                    ForEach(storyBundle.stories.indices,id: \.self) { index in
-                        GeometryReader{geo in
-                            let width = geo.size.width
-                            let progress = min(max(timerProgress - CGFloat(index), 0), 1)
-                            
-                            Capsule()
-                                .fill(.gray.opacity(0.7))
-                                .overlay(alignment: .leading,content: {
-                                    Capsule()
-                                        .fill(.white)
-                                        .frame(width: width * progress)
-                                })
+                        timer.upstream.connect().cancel()
+                    }else{
+                        tapTimer?.invalidate()
+                        print("layer 1")
+                        withAnimation() {
+                            layerOpacIsClear = 1
                         }
+                        timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
                     }
-                }
-                .frame(height: 2)
-                .padding(5)
-            })
+                } perform: {}
+                
+                // profile and x button
+                    .overlay(alignment:.topTrailing ){
+                        HStack(spacing:15){
+                            //profile
+                            Image(storyBundle.accountImage)
+                                .resizable()
+                                .frame(width: 35 , height: 35)
+                                .clipShape(Circle())
+                            Text(storyBundle.accountName)
+                                .foregroundStyle(.white)
+                            
+                            Spacer()
+                            // close button X
+                            Button(action: {
+                                withAnimation {
+                                    vm.showStory = false
+                                }
+                            }, label: {
+                                Image(systemName: "xmark")
+                                    .foregroundStyle(.white)
+                            })
+                        }
+                        .bold()
+                        .font(.title2)
+                        .padding()
+                    }
+                //stories indicator capsule
+                    .overlay(alignment: .top, content: {
+                        HStack(spacing:5){
+                            ForEach(storyBundle.stories.indices,id: \.self) { index in
+                                GeometryReader{geo in
+                                    
+                                    let width = geo.size.width
+                                    let progress = min(max(timerProgress - CGFloat(index), 0), 1)
+                                    
+                                    Capsule()
+                                        .fill(.gray.opacity(0.7))
+                                        .overlay(alignment: .leading,content: {
+                                            Capsule()
+                                                .fill(.white)
+                                                .frame(width: width * progress)
+                                        })
+                                }
+                            }
+                        }
+                        .frame(height: 2)
+                        .padding(5)
+                    })
+                    .opacity(layerOpacIsClear )
+                
+            }
+            )
             
             //3d rotatation
             .rotation3DEffect(
-                getAngle(geo: geo)
+                vm.getAngle(geo: geo)
                 ,
                 axis: /*@START_MENU_TOKEN@*/(x: 0.0, y: 1.0, z: 0.0)/*@END_MENU_TOKEN@*/,
                 anchor: geo.frame(in: .global).minX > 0 ?
                     .leading : .trailing,
                 perspective: 2
             )
-            
         }
+        
         .onAppear(perform: {
             timerProgress = 0
         })
+        
         .onReceive(timer, perform: { _ in
             //update seen status
             if vm.currentStory == storyBundle.id{
@@ -153,6 +173,7 @@ struct CubeTransitionView: View {
                     updateStory()
                 }
             }
+            
         })
         
     }
@@ -186,10 +207,6 @@ struct CubeTransitionView: View {
                 }
             }
         }
-    }
-    func getAngle(geo:GeometryProxy)->Angle{
-        let progress = geo.frame(in: .global).minX / geo.size.width
-        return Angle(degrees: Double(45*progress))
     }
     
     //#Preview {

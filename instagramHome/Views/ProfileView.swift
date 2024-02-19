@@ -12,15 +12,7 @@ struct ProfileView: View {
     @Binding var account : StoryModel
     
     var body: some View {
-//        NavigationStack{
-//            NavigationLink(destination: {
-////                StoryItemsTabView()
-//            },
-//            //label
-//               label: {
-//              
-//            })
-//        }
+
         ZStack{
             //user profile
             Image("\(account.accountImage)")

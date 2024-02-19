@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 class StoryViewModel:ObservableObject {
     //list of stories
     @Published var stories : [StoryModel] = [
@@ -21,4 +22,11 @@ class StoryViewModel:ObservableObject {
     @Published var showStory: Bool = false
     
     @Published var currentStory : String = ""
+    
+    
+    
+    func getAngle(geo:GeometryProxy)->Angle{
+        let progress = geo.frame(in: .global).minX / geo.size.width
+        return Angle(degrees: Double(45*progress))
+    }
 }

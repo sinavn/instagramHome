@@ -7,17 +7,14 @@
 
 import SwiftUI
 
-struct StoryView: View {
+struct StoryBundleView: View {
     @EnvironmentObject var vm : StoryViewModel 
     var body: some View {
         
         if vm.showStory{
             TabView(selection: $vm.currentStory, content: {
                 ForEach($vm.stories) { $story in
-                    CubeTransitionView(storyBundle: $story)
-                        .onAppear(perform: {
-                            
-                        })
+                    StoryContentView(storyBundle: $story)
                 }
             })
             .tabViewStyle(.page(indexDisplayMode: .never))
@@ -31,6 +28,6 @@ struct StoryView: View {
 
 
 #Preview {
-    StoryView()
+    StoryBundleView()
         .environmentObject(StoryViewModel())
 }

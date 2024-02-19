@@ -49,7 +49,7 @@ struct HomePageView: View {
         }
         // show story view if toggled
         .overlay(content: {
-            StoryView()
+            StoryBundleView()
                 .environmentObject(vm)
         })
         .ignoresSafeArea(edges: .bottom)
