@@ -69,18 +69,14 @@ struct StoryContentView: View {
                 }
     // hold story func
                 ._onButtonGesture { isPressed in
-                    var tapTimer : Timer?
                     if isPressed{
-                           tapTimer = Timer.scheduledTimer(withTimeInterval: 0.7, repeats: false) { _ in
-                                withAnimation() {
-                                layerOpacIsClear = 0
-                                 print("layer 0 ")
-                            }
+                        withAnimation() {
+                            layerOpacIsClear = 0
                         }
                         timer.upstream.connect().cancel()
                     }else{
-                        tapTimer?.invalidate()
-                        print("layer 1")
+                       
+                        
                         withAnimation() {
                             layerOpacIsClear = 1
                         }

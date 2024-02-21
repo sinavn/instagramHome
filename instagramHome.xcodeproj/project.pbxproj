@@ -16,7 +16,6 @@
 		6C1380812B7D09E900893A45 /* StoryBundleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C1380802B7D09E900893A45 /* StoryBundleView.swift */; };
 		6C1380832B7E122000893A45 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C1380822B7E122000893A45 /* StoryViewModel.swift */; };
 		6C1380852B7F7C0E00893A45 /* StoryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C1380842B7F7C0E00893A45 /* StoryContentView.swift */; };
-		6C464FE72B83540700E28923 /* Drag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C464FE62B83540700E28923 /* Drag.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +29,6 @@
 		6C1380802B7D09E900893A45 /* StoryBundleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryBundleView.swift; sourceTree = "<group>"; };
 		6C1380822B7E122000893A45 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
 		6C1380842B7F7C0E00893A45 /* StoryContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryContentView.swift; sourceTree = "<group>"; };
-		6C464FE62B83540700E28923 /* Drag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drag.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +86,6 @@
 				6C13807A2B7CC0A000893A45 /* ProfileView.swift */,
 				6C1380802B7D09E900893A45 /* StoryBundleView.swift */,
 				6C1380842B7F7C0E00893A45 /* StoryContentView.swift */,
-				6C464FE62B83540700E28923 /* Drag.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -182,7 +179,6 @@
 				6C1380852B7F7C0E00893A45 /* StoryContentView.swift in Sources */,
 				6C1380812B7D09E900893A45 /* StoryBundleView.swift in Sources */,
 				6C13806A2B7CB74500893A45 /* HomePageView.swift in Sources */,
-				6C464FE72B83540700E28923 /* Drag.swift in Sources */,
 				6C1380682B7CB74500893A45 /* instagramHomeApp.swift in Sources */,
 				6C1380832B7E122000893A45 /* StoryViewModel.swift in Sources */,
 				6C1380792B7CBF6E00893A45 /* StoryModel.swift in Sources */,
